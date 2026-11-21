@@ -1,0 +1,38 @@
+{
+  "name": "dsh-session-detox",
+  "version": "0.2.0",
+  "description": "Session-level cleanup for DSH: scan a session log for the short-line loop pattern, cut it out of the reasoning blocks, and clean the same pattern out of compressed-block summaries. Zero dependencies, pure node.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "skills",
+    "cordis.patch.yml",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "minVersion": "0.2.0"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "session",
+    "repair",
+    "cleanup",
+    "reasoning-loop"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "license": "MIT"
+}

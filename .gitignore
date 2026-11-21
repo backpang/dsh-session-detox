@@ -1,0 +1,23 @@
+# 依赖与构建产物
+node_modules/
+*.log
+
+# 本地备份与手术产物
+detox-backups/
+*.bak-*
+failed-*.jsonl
+orig-*.zstd
+
+# 会话文件与账本（体积大，且可能含私人内容）
+*.v4.jsonl.zstd
+*.jsonl
+*.db
+*.db-wal
+*.db-shm
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
