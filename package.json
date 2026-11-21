@@ -1,6 +1,6 @@
 {
   "name": "dsh-session-detox",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Session-level cleanup for DSH: scan a session log for the short-line loop pattern, cut it out of the reasoning blocks, and clean the same pattern out of compressed-block summaries. Zero dependencies, pure node.",
   "type": "module",
   "main": "lib/index.js",

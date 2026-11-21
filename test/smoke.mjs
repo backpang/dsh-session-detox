@@ -134,4 +134,66 @@ ok('全局正则不因 lastIndex 漏报（回归 0.2.0 修的 bug）', () => {
   }
 });
 
+console.log('stream（流中截断）');
+const { loopScore, truncate, guardStream } = await import('../lib/stream.js');
+const S2 = '\u505a';
+const STUB2 = S2 + '\u3002';
+const badLines = Array.from({ length: 30 }, () => STUB2).join('\n');
+const goodLines = Array.from(
+  { length: 20 },
+  (_, i) => `\u7b2c ${i + 1} \u6b65\u628a\u914d\u7f6e\u91cc\u7684\u8def\u5f84\u6539\u6210\u76f8\u5bf9\u8def\u5f84`,
+).join('\n');
+
+ok('loopScore：正常长句不误杀', () => {
+  assert.equal(loopScore(goodLines), null);
+});
+ok('loopScore：连续极短行命中', () => {
+  const hit = loopScore(badLines);
+  assert.ok(hit, '应命中');
+  assert.ok(hit.maxRun >= 5, `连续段 ${hit.maxRun} 应 >= 5`);
+});
+ok('truncate：保留开头、删掉碎句、接一句收尾', () => {
+  const src = '\u8fd9\u6bb5\u662f\u6b63\u5e38\u7684\u5f00\u5934\u3002\n' + badLines;
+  const out = truncate(src, 240);
+  assert.ok(out.includes('\u8fd9\u6bb5\u662f\u6b63\u5e38\u7684\u5f00\u5934'));
+  assert.ok(!out.includes(STUB2 + '\n' + STUB2), '碎句连写应被清掉');
+  assert.ok(out.endsWith('\u7ee7\u7eed\uff09'));
+});
+
+async function* fakeUpstream(chunks) {
+  for (const c of chunks) yield c;
+}
+
+function makeChunks(text, step = 10) {
+  const out = [{ type: 'block-start', index: 0 }];
+  for (let i = 0; i < text.length; i += step) {
+    out.push({ type: 'reasoning-delta', index: 0, text: text.slice(i, i + step) });
+  }
+  out.push({ type: 'block-end', index: 0, block: { type: 'reasoning', text } });
+  return out;
+}
+
+ok('guardStream：正常流原样透传（chunk 数量一致）', async () => {
+  const chunks = makeChunks(goodLines);
+  const got = [];
+  for await (const c of guardStream(fakeUpstream(chunks))) got.push(c);
+  assert.equal(got.length, chunks.length);
+});
+
+ok('guardStream：退化流会停转发，且落盘的 block-end 是截断版', async () => {
+  const chunks = makeChunks(badLines);
+  const got = [];
+  for await (const c of guardStream(fakeUpstream(chunks))) got.push(c);
+  // reasoning-delta 应该被吃掉一部分
+  const deltasIn = chunks.filter((c) => c.type === 'reasoning-delta').length;
+  const deltasOut = got.filter((c) => c.type === 'reasoning-delta').length;
+  assert.ok(deltasOut < deltasIn, `delta ${deltasOut} 应少于 ${deltasIn}`);
+  // block-end 必须被换掉
+  const end = got.find((c) => c.type === 'block-end');
+  assert.ok(end, 'block-end 应该还在');
+  assert.ok(end.block.text.trim().endsWith('\u7ee7\u7eed\uff09'), 'block-end 应是截断版');
+  const stubCount = (end.block.text.match(new RegExp(STUB2, 'g')) || []).length;
+  assert.ok(stubCount <= 2, `截断版里残留 ${stubCount} 个碎句，应很少`);
+});
+
 console.log(`\n全部通过：${pass} 项`);

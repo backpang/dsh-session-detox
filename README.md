@@ -41,6 +41,26 @@ cp -r dsh-session-detox ~/.dsh/profiles/<profile>/node_modules/
 | `detox_cut` | 剪会话文件：自动备份 → 清洗 → 回读校验 → 覆盖 → 删投影缓存 | 中 |
 | `detox_blocks` | 剪压缩块摘要（billion-context 的 `index.db`），改前整库备份 | 中 |
 
+## 流中截断（可选）
+
+前四样都是**事后**清理。还能在**模型正在写思考的时候**就拦下来：命中就停止转发这一段，并把最终落盘的 `block-end` 换成截断版。
+
+为什么强调落盘那份：DSH 会把历史 thinking 原样发回给模型，一段退化的思考会变成下一轮的范例。只在界面上不显示，落盘的那份还在，下一轮照样被回灌——**所以 `block-end` 必须换**。
+
+默认**关着**。打开：
+
+```json
+{
+  "streamGuard": true
+}
+```
+
+写到 `~/.dsh/session-detox.json`（或 `$DSH_HOME/session-detox.json`）。不用重启：每次流都重新读一次配置。
+
+**风险**：这条路要在 `llm/stream` 上包一层流。宿主版本变化、或上游迭代中途抛错，表现是**整个回合零输出**（典型错误 `stream is not async iterable`）。所以默认关；打开后先在新会话观察一两轮。出问题就把 `streamGuard` 改回 `false`。
+
+判定口径：尾部 40 行里连续 5 行以上极短行、或极短行占比过半（且至少 10 行）就熔断。攒够 80 字开始判，之后每多 40 字判一次。
+
 ## 用法
 
 ```

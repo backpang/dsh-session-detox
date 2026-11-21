@@ -2,6 +2,16 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号按 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [0.3.0] - 2026-11-22
+
+### 新增
+- **流中截断**（`lib/stream.js`）：挂在 `llm/stream` 上，边收 `reasoning-delta` 边判，命中就停止转发这一段，并把落盘的 `block-end` 换成截断版（保留开头 240 字 + 一句收尾，里面的极短行顺手清掉）。默认关，配置项 `streamGuard`。
+- `lib/config.js`：`~/.dsh/session-detox.json` 读写；每次流都重新读，改完不用重启。
+- 测试 +5 项（`loopScore` 不误杀 / 命中，`truncate` 形态，`guardStream` 正常流透传 / 退化流停转发且 `block-end` 被换）。
+
+### 说明
+- 挂 `llm/stream` 的监听器**必须同步返回** `AsyncIterable`：cordis 的 waterfall 是纯同步的，写成 `async` 会让宿主拿到 `Promise`，`for await` 抛 `stream is not async iterable`，整个回合零输出。所以 `streamGuard` 默认 `false`，且所有异常路径都退回原样透传。
+
 ## [0.2.0] - 2026-11-22
 
 ### 修复
