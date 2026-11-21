@@ -31,9 +31,11 @@ ok('LOOP 认连写 3 次，2 次不算', () => {
   assert.equal((LINE3.match(LOOP) || []).length, 1);
   assert.equal((STUB + STUB).match(LOOP), null);
 });
-ok('两三个字的正常短句也会被删——这是已知取舍，写在 skill 里了', () => {
-  assert.equal(STUB_LINE.test('\u597d\u7684\u3002'), true); // 「好的。」两字 + 句号 → 命中
-  assert.equal(STUB_LINE.test('\u8fd9\u4e2a\u6539\u5b8c\u4e86\u3002'), false); // 五字 → 不命中
+ok('一整行只有一个词（含应答类）都算碎句，这不是误伤', () => {
+  // 思考里 1~3 个字独占一行没有任何正经用途：既没有对什么做、也没有做到哪一步
+  assert.equal(STUB_LINE.test('\u597d\u7684\u3002'), true); // 「好的。」
+  assert.equal(STUB_LINE.test('\u6536\u5230\u3002'), true); // 「收到。」
+  assert.equal(STUB_LINE.test('\u8fd9\u4e2a\u6539\u5b8c\u4e86\u3002'), false); // 六字，正常句
   assert.equal(STUB_LINE.test('OK'), false);
 });
 
