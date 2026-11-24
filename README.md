@@ -13,7 +13,11 @@
 
 ## 安装
 
-把仓库目录放进 profile 的 `node_modules`，再在 profile 的 `package.json` 里登记两处：
+```bash
+git clone https://github.com/backpang/dsh-session-detox.git
+```
+
+把克隆下来的目录放进 profile 的 `node_modules`，再在 profile 的 `package.json` 里登记两处：
 
 ```bash
 cp -r dsh-session-detox ~/.dsh/profiles/<profile>/node_modules/

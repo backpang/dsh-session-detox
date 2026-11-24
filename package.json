@@ -34,6 +34,15 @@
   "engines": {
     "node": ">=24"
   },
+  "author": "backpang <backpang@users.noreply.github.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/backpang/dsh-session-detox.git"
+  },
+  "homepage": "https://github.com/backpang/dsh-session-detox#readme",
+  "bugs": {
+    "url": "https://github.com/backpang/dsh-session-detox/issues"
+  },
   "scripts": {
     "test": "node test/smoke.mjs"
   },
