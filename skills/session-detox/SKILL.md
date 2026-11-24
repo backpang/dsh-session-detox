@@ -1,6 +1,6 @@
 ---
 name: session-detox
-description: 清理 DSH 会话与压缩摘要里反复出现的极短重复行——detox_find 按名字找会话、detox_scan 看量、detox_cut 剪会话文件、detox_blocks 清压缩块、detox_workspace 扫工作区。只碰 reasoning 与 system/tool 文本，user 正文一个字不动。
+description: 清理 DSH 会话与压缩摘要里反复出现的极短重复行——detox_find 按名字找会话、detox_scan 看量、detox_cut 剪会话文件（剪完不用重启）、detox_blocks 清压缩块（改完必须重启 DSH，否则会被改回去）、detox_workspace 扫工作区。只碰 reasoning 与 system/tool 文本，user 正文一个字不动。
 ---
 
 # 会话文本清理（插件版）
