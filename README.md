@@ -13,26 +13,33 @@
 
 ## 安装
 
-```bash
-git clone https://github.com/backpang/dsh-session-detox.git
-```
-
-把克隆下来的目录放进 profile 的 `node_modules`，再在 profile 的 `package.json` 里登记两处：
+**从 npm（推荐）**：
 
 ```bash
-cp -r dsh-session-detox ~/.dsh/profiles/<profile>/node_modules/
+pnpm add dsh-session-detox      # 或 npm i dsh-session-detox
 ```
+
+然后在 profile 的 `package.json` 里登记两处：
 
 ```json
 {
   "dependencies": {
-    "dsh-session-detox": "file:./node_modules/dsh-session-detox"
+    "dsh-session-detox": "^0.3.2"
   },
   "dsh": {
     "bundles": ["dsh-session-detox"]
   }
 }
 ```
+
+**从源码**（要改代码调试时）：
+
+```bash
+git clone https://github.com/backpang/dsh-session-detox.git
+cp -r dsh-session-detox ~/.dsh/profiles/<profile>/node_modules/
+```
+
+登记方式同上，`dependencies` 里写 `"file:./node_modules/dsh-session-detox"`。
 
 重启 DSH，五个工具就出现在工具列表里。
 

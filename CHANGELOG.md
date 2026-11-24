@@ -2,6 +2,14 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号按 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [0.3.2] - 2026-11-24
+
+### 文档
+- **安装段重写**：补上 `pnpm add dsh-session-detox` / `npm i dsh-session-detox` 这条最短路径（包已发布到公共 npm），把从源码安装降级成「要改代码调试时」的备选。0.3.1 的 README 只写了 `git clone` + 手动拷，等于让想装的人多走三步。
+
+### 说明
+- 这是纯文档版本，代码与 0.3.1 完全一致；升版本号只是为了在 npm 上生效。
+
 ## [0.3.1] - 2026-11-24
 
 ### 新增
