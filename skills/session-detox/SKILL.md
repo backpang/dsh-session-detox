@@ -1,11 +1,11 @@
 ---
 name: session-detox
-description: 清理 DSH 会话与压缩摘要里反复出现的极短重复行——detox_scan 看量、detox_cut 剪会话文件、detox_blocks 清压缩块、detox_workspace 扫工作区。只碰 reasoning 与 system/tool 文本，user 正文一个字不动。
+description: 清理 DSH 会话与压缩摘要里反复出现的极短重复行——detox_find 按名字找会话、detox_scan 看量、detox_cut 剪会话文件、detox_blocks 清压缩块、detox_workspace 扫工作区。只碰 reasoning 与 system/tool 文本，user 正文一个字不动。
 ---
 
 # 会话文本清理（插件版）
 
-> 四个工具：`detox_scan`（只读）、`detox_cut`（剪会话文件）、`detox_blocks`（清压缩块摘要）、`detox_workspace`（扫工作区）。
+> 五个工具：`detox_find`（按名字找会话）、`detox_scan`（只读）、`detox_cut`（剪会话文件）、`detox_blocks`（清压缩块摘要）、`detox_workspace`（扫工作区）。
 > 零依赖，不需要 python，不需要外部脚本。
 
 ## 什么时候用
@@ -14,8 +14,19 @@ description: 清理 DSH 会话与压缩摘要里反复出现的极短重复行�
 - 压缩摘要里还挂着大段这样的行（每轮注入，等于反复提醒）
 - 用户说「清一下」「剪掉那些重复行」「压缩块里还留着」
 
+## 先找会话（别硬猜 id）
+
+用户只会说名字（「帮 11 号去毒」「那条 P站小说的会话」），不会给 uuid。
+
+1. `detox_find{query:"11号"}` —— 标题和 host 都是现成的，从 bili 账本的 `sessions` 表读，一条 SQL 就够。
+2. 命中行里取**前 8 位 id**，再看「空闲多少秒」：`< 180s` 说明还在写，别急着 cut。
+3. 关键词太宽（例如只给一个数字）时按 host 命中优先排序，最近的在前。
+
+账本里没标题的会话，`detox_find` 会退回读文件开头几帧的首条用户消息，仍然给得出名字。
+
 ## 顺序（不能换）
 
+0. **`detox_find`** —— 拿到 id。跳过这步直接猜前缀，十有八九白跑。
 1. **`detox_scan`** —— 先看量。它报：事件数、待改条数、极短行数、循环段数、以及压缩块里哪几块有残留。
 2. **`detox_cut`** —— 剪会话文件。**这一步不用停 DSH**：它自己查 mtime，不足 180 秒直接拒绝（运行中的会话写断 seq 会打不开）；切完文件已落盘、投影缓存已删，下次打开读到的就是清理后的内容。
 3. **停掉 DSH** —— 只有要走第 4 步才需要停。

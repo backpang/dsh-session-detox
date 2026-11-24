@@ -2,6 +2,18 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号按 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [0.3.1] - 2026-11-24
+
+### 新增
+- **`detox_find`**（`lib/find.js`）：按名字找会话。关键词或 id 前缀 → 会话 id、host、标题、体积、空闲秒数。标题优先读 billion-context 的 `sessions` 表（`title` / `host_title`），账本里没有的退回读会话文件开头几帧的第一条用户消息；只读文件头 1MB，全量 262 条会话 40ms 内出结果。
+- 排序：关键词命中 `host` 的最前，其次标题，最后 id；同组按最近活跃排。返回里的空闲秒数小于 180 就是还在写。
+
+### 修复
+- **按目录名找会话会漏掉一大半**：`findSessionDir` 只认 `session-*` 开头的目录，但 `~/.dsh/sessions/<workspace>/` 下大部分目录是裸 uuid。现在两种都认。
+
+### 说明
+- 会话标题不在会话文件里、也不在投影缓存里（projcache 只有 `version`/`record`），所以别再试着从那里读标题。
+
 ## [0.3.0] - 2026-11-22
 
 ### 新增

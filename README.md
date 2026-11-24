@@ -30,12 +30,13 @@ cp -r dsh-session-detox ~/.dsh/profiles/<profile>/node_modules/
 }
 ```
 
-重启 DSH，四个工具就出现在工具列表里。
+重启 DSH，五个工具就出现在工具列表里。
 
-## 四个工具
+## 五个工具
 
 | 工具 | 作用 | 危险度 |
 |---|---|---|
+| `detox_find` | 按名字找会话：关键词或 id 前缀 → 会话 id、标题、体积、空闲秒数 | 零 |
 | `detox_scan` | 只读扫描一条会话：待改条数、极短行数、循环段数，以及压缩块里哪几块带残留 | 零 |
 | `detox_workspace` | 扫工作区里**会被注入上下文**的文件（`AGENTS.md` / `.dsh/skills`），列出残留。只报告不改 | 零 |
 | `detox_cut` | 剪会话文件：自动备份 → 清洗 → 回读校验 → 覆盖 → 删投影缓存 | 中 |
@@ -64,11 +65,14 @@ cp -r dsh-session-detox ~/.dsh/profiles/<profile>/node_modules/
 ## 用法
 
 ```
+detox_find      { "query": "11号" }
 detox_scan      { "session": "5422f542" }
 detox_workspace { }
 detox_cut       { "session": "5422f542" }
 detox_blocks    { "session": "5422f542" }
 ```
+
+用户说的是名字（「帮 11 号去毒」），不是 uuid。**先 `detox_find` 拿 id，别猜前缀**：会话目录名可能带 `session-` 也可能不带，只按目录名找会漏掉一大半。标题从 billion-context 的 `sessions` 表读（`title` / `host_title`），账本里没有的退回读会话文件开头几帧的第一条用户消息。关键词命中 `host` 的排前面，同组按最近活跃排；返回里的「空闲秒数」小于 180 就是还在写。
 
 `session` **必填**，传会话 id 或其前缀（uuid 前 8 位能唯一匹配即可）。
 
@@ -119,8 +123,9 @@ detox_blocks    { "session": "5422f542" }
 
 ## 文件
 
-- `lib/index.js` — 注册四个工具 + skill
+- `lib/index.js` — 注册五个工具 + skill
 - `lib/session.js` — 找会话、扫、剪
+- `lib/find.js` — 按名字找会话（账本标题 + 首条用户消息兜底）
 - `lib/blocks.js` — 压缩块扫描与清理
 - `lib/workspace.js` — 工作区扫描
 - `lib/detect.js` — 判据与清洗
