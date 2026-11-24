@@ -2,6 +2,16 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号按 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [0.3.3] - 2026-11-24
+
+### 元数据
+- **加 `dsh.catalog`**：`category: tool` + 中英摘要 + `capabilities: ["fs","sqlite","llm/stream"]`。DSH 的插件市场 `dsh-plugin-shop` 靠这个字段决定分类和卡片文字，不写就只能由机器按 npm description 猜。
+- **keywords 从 7 个补到 15 个**：补 `plugin`、`guard`、`loop`、`repetition`、`thinking-loop`、`session-health` 与两个中文词（`会话清理`、`思考循环`）。同类插件（`dsh-attention-health`、`dsh-loop-guard`、`dsh-allostasis`）都用这组词，市场与 npm 搜索都按关键词匹配。
+
+### 说明
+- 纯元数据版本，代码与 0.3.2 完全一致。
+- 市场收录只看两件事：keywords 里有 `dsh-plugin` 或 `deepseek-harness`，且声明了 `dsh.bundle` —— 这两条从 0.3.1 起就满足了，所以这次补的是「卡片好看」而不是「能不能进」。
+
 ## [0.3.2] - 2026-11-24
 
 ### 文档
